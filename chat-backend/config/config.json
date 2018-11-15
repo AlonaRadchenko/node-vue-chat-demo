@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "chat_demo_user",
+    "password": "chat_demo_user",
+    "database": "node-vue-chat-demo",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+
+}
