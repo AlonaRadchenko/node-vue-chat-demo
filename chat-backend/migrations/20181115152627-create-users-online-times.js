@@ -11,8 +11,8 @@ module.exports = {
       username: {
         type: Sequelize.STRING
       },
-      users_online_times: {
-        type: Sequelize.BIGINT
+      online_timestamp: {
+        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,

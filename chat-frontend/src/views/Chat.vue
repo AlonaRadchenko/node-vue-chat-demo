@@ -10,13 +10,16 @@
         
         </div>
         <div class="dialog-and-users">
-          <div class="dialog"></div>
+          <div class="dialog">
+            <div class = "mes" :key="message.id" v-for='message in messages' show>
+              {{message.username}} {{message.text}}
+            </div>
+
+          </div>
            <div class="users">
              <b-list-group>
-               <b-list-group-item button>Button item</b-list-group-item>
-               <b-list-group-item button>I am a button</b-list-group-item>
-               <b-list-group-item button disabled>Disabled button</b-list-group-item>
-               <b-list-group-item button>This is a button too</b-list-group-item>
+               <b-list-group-item button :key="userOnline.id" v-for='userOnline in usersOnline' show>{{userOnline.username}}</b-list-group-item>
+               
              </b-list-group>
             </div>          
          </div>
@@ -46,14 +49,15 @@ export default {
   name: "chat",
   data() {
     return{
-      username:'',
+      username:'DefaultUser',
       text:''
     }
 
 
   },
   computed: {
-    ...mapState(['messages'])
+    ...mapState(['messages']),
+    ...mapState(['usersOnline'])
   },
   methods: {
     ...mapActions(['actionSendMessage']),
@@ -61,12 +65,27 @@ export default {
       const message={
         username: this.username,
         text: this.text
-      };
-      actionSaveMessage(message);
       
-    }
+      };
+ this.actionSendMessage(message);
 
-  }
+this.text="";
+  },
+  ...mapActions(['actionFetchMessages']),
+  ...mapActions(['actionGetOnlineUsers']),
+  },
+mounted() {
+    setInterval(() => {
+        this.actionFetchMessages()
+    }, 5000);
+     setInterval(() => {
+       const user={username:this.username}
+        this.actionGetOnlineUsers(user)
+      
+    }, 5000)
+
+}
+
 };
 </script>
 
@@ -118,11 +137,21 @@ export default {
         width: 250%;
         height: 400px;
         display: flex;
-         background-color: rgba($color: #97a4eb, $alpha: 0.7);
+        background-color: rgba($color: #97a4eb, $alpha: 0.7);
         margin-top: 5px;
         margin-bottom: 5px;
         margin-right: 5px;
         border-radius: 5px;
+        flex-direction: column;
+        .mes {
+          display: flex;
+          margin: 10px;
+          align-items:flex-end;
+          padding: 10 px;
+          
+          background-color: rgba($color:  white, $alpha: 0.7);
+          
+        }
       }
       .users {
         width: 100%;

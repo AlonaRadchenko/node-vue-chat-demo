@@ -49,16 +49,40 @@ function postJson(url, data = {}, callback, errorCallback) {
 export default new Vuex.Store({
   state: {
     messages: [],
+    lastPollTime: 0,
+    usersOnline: [],
 
   },
   mutations: {
+    setMessage(state,data){
+      state.messages = state.messages.concat(data);
+    },
+    setTime(state,data){
+      state.lastPollTime = data
 
-    sendMessage(state,data){
-      state.messages = data;
-    }
+    },
+    setUsersOnline(state,data){
+      state.usersOnline = data
+
+    },
+
   },
   actions: {
-    actionSaveMessage(_,data){
+    actionFetchMessages({commit,state}){
+      let url = `http://localhost:3000/message/list?createdAfter=`;
+      if(state.lastPollTime !== 0) {
+         url += `${state.lastPollTime}`;
+      }
+       
+      getJson(url, (data) => {
+       
+        commit('setMessage',data.message);
+        commit('setTime',data.lastPollTime);  
+      }, () => {}) ;
+
+
+    },
+    actionSendMessage(_, data){
       return new Promise((resolve, reject) => {
         postJson('http://localhost:3000/message/send',data, () => {
           resolve();
@@ -66,7 +90,11 @@ export default new Vuex.Store({
           reject();
         });
       });
+    },
+    actionGetOnlineUsers({commit},data){
+
+      postJson('http://localhost:3000/user/get_online_users',data, (data) => {commit('setUsersOnline',data.users_online_times)});
     }
 
-  }
+  },
 })
